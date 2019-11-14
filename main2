@@ -1,0 +1,100 @@
+import math
+import statistics
+import values
+
+
+def digits(num):
+    if num == 0:
+        return 1
+    return int(math.log10(num))
+
+
+def available_resistors(magnitude, tolerance=3):
+    nominals = (
+        0, 1, 1.1, 1.2, 1.3, 1.5, 1.6, 1.8, 2, 2.2, 2.4, 2.7, 3, 3.3, 3.6, 3.9, 4.3, 4.7, 5.1, 5.6, 6.2, 6.8, 7.5, 8.2,
+        9.1)
+    resistors = []
+    for num in nominals:
+        resistors += [(float(magnitude * num) - tolerance, float(magnitude * num) + tolerance, float(magnitude * num))]
+    return resistors
+
+
+def sorter(unsorted_resistances):
+    ignore_indexes = []
+    pair_indexes = []
+    values.PairData.temp_pairs = []
+    values.PairData.unique_pairs = []
+
+    for i in range(len(unsorted_resistances)):
+        for j in range(len(unsorted_resistances)):
+
+            if i == j:
+                continue
+            if (j, i) in ignore_indexes:
+                continue
+
+            difference = abs(unsorted_resistances[i] - unsorted_resistances[j])
+            for standard_resistances in available_resistors(10 ** digits(difference)):
+                if standard_resistances[1] > difference > standard_resistances[0]:
+                    print(unsorted_resistances[i], unsorted_resistances[j], difference, standard_resistances[2])
+                    pair_indexes += [(i, j)]
+                    break
+
+            ignore_indexes += [(i, j)]
+
+    print('pairs: ', pair_indexes)
+
+    recursion_loop(pair_indexes, len(unsorted_resistances))
+    print('uniques: ', values.PairData.unique_pairs)
+
+
+def find_min_pairs(pairs, num_of_resistors):
+    num0 = num_of_resistors * [0]
+    for i in pairs:
+        for possible_nums in range(num_of_resistors):
+            num0[possible_nums] += i.count(possible_nums)
+    for j in range(len(num0)):
+        if num0[j] == 0:
+            num0[j] = 9999
+    return num0
+
+
+def recursion_loop(pairs, num_of_resistors):
+
+    num_of_pairs = find_min_pairs(pairs, num_of_resistors)
+    if statistics.mean(num_of_pairs) == 9999:
+        print('temp: ', values.PairData.temp_pairs)
+        print('uniques: ', values.PairData.unique_pairs)
+        print(len(values.PairData.temp_pairs), len(values.PairData.unique_pairs))
+        if len(values.PairData.temp_pairs) > len(values.PairData.unique_pairs):
+            # pass
+            print('uniques: ', values.PairData.unique_pairs)
+            values.PairData.unique_pairs = values.PairData.temp_pairs
+        else:
+            print("outside")
+        return
+    for i in range(len(num_of_pairs)):
+        if num_of_pairs[i] == 9999:
+            continue
+        index_of_current_resistor = i
+        break
+
+    for j in range(num_of_pairs[index_of_current_resistor]):
+        if j > 0:
+            del values.PairData.temp_pairs[-1]
+        values.PairData.temp_pairs += [pairs[j]]
+
+        recursion_loop(remove_resistors(pairs, pairs[j]), num_of_resistors)
+    del values.PairData.temp_pairs[-1]
+
+
+def remove_resistors(pairs, pair_to_remove):
+    combo = []
+    for pair in pairs:
+        if pair[0] in pair_to_remove or pair[1] in pair_to_remove:
+            continue
+        combo += [pair]
+    return combo
+
+
+sorter(values.PairData.R1)
