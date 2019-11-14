@@ -60,18 +60,15 @@ def find_min_pairs(pairs, num_of_resistors):
 
 
 def recursion_loop(pairs, num_of_resistors):
+    if len(values.PairData.unique_pairs) > int(num_of_resistors/2)-1:
+        return
 
     num_of_pairs = find_min_pairs(pairs, num_of_resistors)
+
     if statistics.mean(num_of_pairs) == 9999:
-        print('temp: ', values.PairData.temp_pairs)
-        print('uniques: ', values.PairData.unique_pairs)
-        print(len(values.PairData.temp_pairs), len(values.PairData.unique_pairs))
         if len(values.PairData.temp_pairs) > len(values.PairData.unique_pairs):
-            # pass
-            print('uniques: ', values.PairData.unique_pairs)
-            values.PairData.unique_pairs = values.PairData.temp_pairs
-        else:
-            print("outside")
+            values.PairData.unique_pairs = tuple(values.PairData.temp_pairs)
+            print('unique: ', values.PairData.unique_pairs)
         return
     for i in range(len(num_of_pairs)):
         if num_of_pairs[i] == 9999:
@@ -83,6 +80,7 @@ def recursion_loop(pairs, num_of_resistors):
         if j > 0:
             del values.PairData.temp_pairs[-1]
         values.PairData.temp_pairs += [pairs[j]]
+        # print('temp: ', values.PairData.temp_pairs)
 
         recursion_loop(remove_resistors(pairs, pairs[j]), num_of_resistors)
     del values.PairData.temp_pairs[-1]
@@ -97,4 +95,4 @@ def remove_resistors(pairs, pair_to_remove):
     return combo
 
 
-sorter(values.PairData.R1)
+sorter(values.PairData.R)
