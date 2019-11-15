@@ -2,10 +2,13 @@ import math
 
 R = (10115, 10125, 9998,10071,9937,9941,9973,9862,9853,9950,9988,9993,10067,9956,9975,10072,10012,10075,9865,9953,10037,9865,10051,9999,9984,10053,10007)
 unique_pairs = []
+
+
 def digits(num):
   if num == 0:
     return 1
   return int(math.log10(num))
+
 
 def index_remover(list_of_indexes, to_remove):
   global unique_pairs
@@ -25,6 +28,7 @@ def index_remover(list_of_indexes, to_remove):
       unique_pairs += [list_of_indexes[j]]
   return to_return
 
+
 def available_resistors(magnitude, tolerance=3):
   global unique_pairs
   nominals = (0, 1, 1.1, 1.2, 1.3, 1.5, 1.6, 1.8, 2, 2.2, 2.4, 2.7, 3, 3.3, 3.6, 3.9, 4.3, 4.7, 5.1, 5.6, 6.2, 6.8, 7.5, 8.2, 9.1)
@@ -32,6 +36,7 @@ def available_resistors(magnitude, tolerance=3):
   for num in nominals:
     resistors += [(float(magnitude*num)-tolerance/2, float(magnitude*num)+tolerance/2, float(magnitude*num))]
   return resistors
+
 
 def sorter(unsorted_resitances):
   ignore_indexes = []
